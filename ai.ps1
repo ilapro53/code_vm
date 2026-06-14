@@ -185,9 +185,9 @@ switch ($Action) {
         if ($RemainingArgs) { $AgentArgs += $RemainingArgs }
 
         if ($AgentArgs.Count -gt 0) {
-            docker exec -u $User -i $ContainerName $binary $AgentArgs
+            docker exec -u $User -it $ContainerName $binary $AgentArgs
         } else {
-            docker exec -u $User -i $ContainerName $binary
+            docker exec -u $User -it $ContainerName $binary
         }
     }
 }
