@@ -1,0 +1,22 @@
+# Credentials
+.env
+
+# Mount points (bind-mounted host directories)
+mnt/
+
+# Input files (user-provided)
+input/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Docker
+.docker/
+
+# Misc
+*.log
