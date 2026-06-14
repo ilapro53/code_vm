@@ -1,6 +1,9 @@
 services:
   ai-tool:
-    build: .
+    build:
+      context: .
+      args:
+        AGENT: mimo
     volumes:
       - ./mnt:/workspace/mnt:rw
       - ./input:/workspace/input:ro
