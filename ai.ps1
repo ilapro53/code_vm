@@ -185,9 +185,10 @@ switch ($Action) {
         if ($RemainingArgs) { $AgentArgs += $RemainingArgs }
 
         if ($AgentArgs.Count -gt 0) {
-            winpty docker exec -u $User -it $ContainerName $binary $AgentArgs
+            $cmd = "docker exec -u $User -it $ContainerName $binary $($AgentArgs -join ' ')"
         } else {
-            winpty docker exec -u $User -it $ContainerName $binary
+            $cmd = "docker exec -u $User -it $ContainerName $binary"
         }
+        cmd.exe /c $cmd
     }
 }
