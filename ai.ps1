@@ -1,6 +1,6 @@
 ﻿param(
     [Parameter(Mandatory=$false, Position=0)]
-    [ValidateSet("up", "down", "grant", "revoke", "revoke_all", "bash", "mimo")]
+    [ValidateSet("up", "down", "grant", "revoke", "revoke_all", "bash", "agent")]
     [string]$Action,
 
     [Parameter(Position=1, Mandatory=$false)]
@@ -8,6 +8,10 @@
 
     [Parameter(Position=2, Mandatory=$false)]
     [string]$Param2,
+
+    [Parameter(Mandatory=$false)]
+    [ValidateSet("mimo")]
+    [string]$Agent = "mimo",
 
     [Parameter(Mandatory=$false)]
     [switch]$Root,
@@ -24,29 +28,48 @@
 $ComposeDir = "O:\code_vm"
 $ContainerName = "code_vm-ai-tool-1"
 $DefaultUser = "aiuser"
+$AgentsDir = Join-Path $ComposeDir "agents"
+
+function Get-AgentBinary {
+    param([string]$AgentName)
+    $ConfigPath = Join-Path $AgentsDir "$AgentName/config.json"
+    if (Test-Path $ConfigPath) {
+        $config = Get-Content $ConfigPath | ConvertFrom-Json
+        return $config.binary
+    }
+    return $null
+}
+
+function Get-AgentList {
+    $dirs = Get-ChildItem $AgentsDir -Directory
+    return ($dirs | ForEach-Object { $_.Name })
+}
 
 # КАСТОМНЫЙ КОМПАКТНЫЙ HELP
 if ($Help -or -not $Action) {
+    $AgentList = Get-AgentList
     Write-Host "`nAI Container Wrapper" -ForegroundColor Cyan
     Write-Host "Использование: " -NoNewline; Write-Host ".\ai.ps1 <Действие> [Параметры]" -ForegroundColor Yellow
     
     Write-Host "`nДоступные действия:" -ForegroundColor DarkCyan
-    Write-Host "  up            " -NoNewline; Write-Host "Запустить контейнеры в фоне (docker compose up -d)" -ForegroundColor Gray
-    Write-Host "  down          " -NoNewline; Write-Host "Остановить и удалить контейнеры (docker compose down)" -ForegroundColor Gray
-    Write-Host "  grant         " -NoNewline; Write-Host "Выдать доступ к папке. Формат: grant <Путь_Win> [алиас]" -ForegroundColor Gray
-    Write-Host "  revoke        " -NoNewline; Write-Host "Отозвать доступ у папки или алиаса" -ForegroundColor Gray
-    Write-Host "  revoke_all    " -NoNewline; Write-Host "Сбросить права доступа для ВСЕХ смонтированных папок" -ForegroundColor Gray
-    Write-Host "  bash          " -NoNewline; Write-Host "Запустить интерактивный Bash сеанс" -ForegroundColor Gray
-    Write-Host "  mimo          " -NoNewline; Write-Host "Запустить mimo по полному пути от имени root" -ForegroundColor Gray
+    Write-Host "  up            " -NoNewline; Write-Host "Запустить контейнеры" -ForegroundColor Gray
+    Write-Host "  down          " -NoNewline; Write-Host "Остановить и удалить контейнеры" -ForegroundColor Gray
+    Write-Host "  grant         " -NoNewline; Write-Host "Выдать доступ к папке" -ForegroundColor Gray
+    Write-Host "  revoke        " -NoNewline; Write-Host "Отозвать доступ" -ForegroundColor Gray
+    Write-Host "  revoke_all    " -NoNewline; Write-Host "Размонтировать всё в /workspace/mnt" -ForegroundColor Gray
+    Write-Host "  bash          " -NoNewline; Write-Host "Интерактивный Bash сеанс" -ForegroundColor Gray
+    Write-Host "  agent         " -NoNewline; Write-Host "Запустить AI-агент" -ForegroundColor Gray
     
     Write-Host "`nМодификаторы:" -ForegroundColor DarkCyan
-    Write-Host "  -Root         " -NoNewline; Write-Host "Выполнять команды bash от root (иначе от aiuser)" -ForegroundColor DarkYellow
-    Write-Host "  -h, -Help     " -NoNewline; Write-Host "Показать эту компактную справку" -ForegroundColor DarkYellow
+    Write-Host "  -Agent <name> " -NoNewline; Write-Host "AI-агент: $($AgentList -join ', ')" -ForegroundColor DarkYellow
+    Write-Host "  -Root         " -NoNewline; Write-Host "Выполнять bash от root" -ForegroundColor DarkYellow
+    Write-Host "  -h, -Help     " -NoNewline; Write-Host "Показать справку" -ForegroundColor DarkYellow
     
-    Write-Host "`nПримеры использования:" -ForegroundColor Green
+    Write-Host "`nПримеры:" -ForegroundColor Green
     Write-Host "  .\ai.ps1 up"
-    Write-Host "  .\ai.ps1 mimo"
-    Write-Host "  .\ai.ps1 mimo --help"
+    Write-Host "  .\ai.ps1 up -Agent mimo"
+    Write-Host "  .\ai.ps1 agent"
+    Write-Host "  .\ai.ps1 agent --help"
     Write-Host "  .\ai.ps1 bash -Root`n"
     return
 }
@@ -63,12 +86,12 @@ function Invoke-LocalCompose {
 
 switch ($Action) {
     "up" {
-        Write-Host "Запуск окружения Docker Compose..." -ForegroundColor Green
-        Invoke-LocalCompose up -d
+        Write-Host "Запуск контейнера (агент: $Agent)..." -ForegroundColor Green
+        Invoke-LocalCompose up -d --build --build-arg AGENT=$Agent
     }
     
     "down" {
-        Write-Host "Остановка окружения Docker Compose..." -ForegroundColor Yellow
+        Write-Host "Остановка окружения..." -ForegroundColor Yellow
         Invoke-LocalCompose down
     }
 
@@ -105,26 +128,29 @@ switch ($Action) {
 
     "bash" {
         $User = if ($Root) { "root" } else { $DefaultUser }
-        Write-Host "Вход в интерактивный Bash сеанс (Пользователь: $User)..." -ForegroundColor Cyan
+        Write-Host "Вход в Bash (Пользователь: $User)..." -ForegroundColor Cyan
         docker exec -u $User -it $ContainerName /bin/bash
     }
 
-    "mimo" {
+    "agent" {
+        $binary = Get-AgentBinary $Agent
+        if (-not $binary) {
+            Write-Error "Агент '$Agent' не найден. Доступные: $(Get-AgentList -join ', ')"
+            return
+        }
+        
         $User = "aiuser"
-        $MimoPath = "/root/.mimocode/bin/mimo"
+        Write-Host "Запуск агента '$Agent' ($binary)..." -ForegroundColor Magenta
         
-        Write-Host "Запуск утилиты mimo внутри контейнера (Пользователь: $User)..." -ForegroundColor Magenta
-        
-        # Собираем аргументы, если они были переданы
-        $MimoArgs = @()
-        if ($Param1) { $MimoArgs += $Param1 }
-        if ($Param2) { $MimoArgs += $Param2 }
-        if ($RemainingArgs) { $MimoArgs += $RemainingArgs }
+        $AgentArgs = @()
+        if ($Param1) { $AgentArgs += $Param1 }
+        if ($Param2) { $AgentArgs += $Param2 }
+        if ($RemainingArgs) { $AgentArgs += $RemainingArgs }
 
-        if ($MimoArgs.Count -gt 0) {
-            docker exec -u $User -it $ContainerName $MimoPath $MimoArgs
+        if ($AgentArgs.Count -gt 0) {
+            docker exec -u $User -it $ContainerName $binary $AgentArgs
         } else {
-            docker exec -u $User -it $ContainerName $MimoPath
+            docker exec -u $User -it $ContainerName $binary
         }
     }
 }

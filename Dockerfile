@@ -1,3 +1,5 @@
+ARG AGENT=mimo
+
 FROM debian:bookworm-slim
 
 ENV LANG=C.UTF-8 \
@@ -8,8 +10,12 @@ RUN apt-get update && apt-get install -y curl ca-certificates git bash gosu \
 
 RUN useradd -m -u 1001 -s /bin/bash aiuser
 
-# Устанавливаем инструмент
-RUN curl -fsSL https://mimo.xiaomi.com/install | bash
+# Установка AI-агента
+COPY agents/ /tmp/agents/
+RUN if [ -f /tmp/agents/${AGENT}/install.sh ]; then \
+      chmod +x /tmp/agents/${AGENT}/install.sh && \
+      /tmp/agents/${AGENT}/install.sh; \
+    fi
 
 # Скрипты управления доступом
 COPY entrypoint.sh /entrypoint.sh
