@@ -1,6 +1,6 @@
-ARG AGENT=mimo
-
 FROM debian:bookworm-slim
+
+ARG AGENT=mimo
 
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8
@@ -11,11 +11,8 @@ RUN apt-get update && apt-get install -y curl ca-certificates git bash gosu \
 RUN useradd -m -u 1001 -s /bin/bash aiuser
 
 # Установка AI-агента
-COPY agents/ /tmp/agents/
-RUN if [ -f /tmp/agents/${AGENT}/install.sh ]; then \
-      chmod +x /tmp/agents/${AGENT}/install.sh && \
-      /tmp/agents/${AGENT}/install.sh; \
-    fi
+COPY agents/${AGENT}/install.sh /tmp/install.sh
+RUN chmod +x /tmp/install.sh && /tmp/install.sh
 
 # Скрипты управления доступом
 COPY entrypoint.sh /entrypoint.sh
