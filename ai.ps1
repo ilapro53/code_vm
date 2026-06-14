@@ -1,6 +1,6 @@
 ﻿param(
     [Parameter(Mandatory=$false, Position=0)]
-    [ValidateSet("up", "down", "reset", "recreate", "status", "grant", "revoke", "revoke_all", "bash", "agent")]
+    [ValidateSet("up", "down", "reset", "recreate", "rebuild", "status", "grant", "revoke", "revoke_all", "bash", "agent")]
     [string]$Action,
 
     [Parameter(Position=1, Mandatory=$false)]
@@ -58,7 +58,8 @@ if ($Help -or -not $Action) {
     Write-Host "  revoke        " -NoNewline; Write-Host "Отозвать доступ" -ForegroundColor Gray
     Write-Host "  revoke_all    " -NoNewline; Write-Host "Размонтировать всё в /workspace/mnt" -ForegroundColor Gray
     Write-Host "  reset         " -NoNewline; Write-Host "Удалить контейнеры и тома (down -v)" -ForegroundColor Gray
-    Write-Host "  recreate      " -NoNewline; Write-Host "Удалить + заново запустить (reset + up)" -ForegroundColor Gray
+    Write-Host "  recreate      " -NoNewline; Write-Host "Сбросить контейнер и данные (down -v + up)" -ForegroundColor Gray
+    Write-Host "  rebuild       " -NoNewline; Write-Host "Пересобрать образ (build --no-cache)" -ForegroundColor Gray
     Write-Host "  status        " -NoNewline; Write-Host "Показать статус контейнеров" -ForegroundColor Gray
     Write-Host "  bash          " -NoNewline; Write-Host "Интерактивный Bash сеанс" -ForegroundColor Gray
     Write-Host "  agent         " -NoNewline; Write-Host "Запустить AI-агент" -ForegroundColor Gray
@@ -73,6 +74,7 @@ if ($Help -or -not $Action) {
     Write-Host "  .\ai.ps1 up -Agent mimo"
     Write-Host "  .\ai.ps1 reset"
     Write-Host "  .\ai.ps1 recreate"
+    Write-Host "  .\ai.ps1 rebuild"
     Write-Host "  .\ai.ps1 status"
     Write-Host "  .\ai.ps1 agent"
     Write-Host "  .\ai.ps1 agent --help"
@@ -113,10 +115,14 @@ switch ($Action) {
     }
 
     "recreate" {
-        Write-Host "Пересоздание контейнера (агент: $Agent)..." -ForegroundColor Cyan
+        Write-Host "Сброс контейнера и данных..." -ForegroundColor Cyan
         Invoke-LocalCompose down -v
-        Invoke-LocalCompose build --no-cache
         Invoke-LocalCompose up -d
+    }
+
+    "rebuild" {
+        Write-Host "Пересборка образа (--no-cache)..." -ForegroundColor Cyan
+        Invoke-LocalCompose build --no-cache
     }
 
     "grant" {
