@@ -20,6 +20,8 @@ Docker-окружение для AI-агентов.
 | Bash | `.\ai.ps1 bash` | Bash (aiuser) |
 | Bash root | `.\ai.ps1 bash -Root` | Bash (root) |
 | Агент | `.\ai.ps1 agent` | Запустить AI-агент |
+| Сброс | `.\ai.ps1 reset` | Удалить контейнеры и тома |
+| Пересоздание | `.\ai.ps1 recreate` | Удалить + заново запустить |
 | Доступ | `.\ai.ps1 grant 'T:\path' [alias]` | Выдать доступ |
 | Отзыв | `.\ai.ps1 revoke alias` | Отозвать доступ |
 | Всё | `.\ai.ps1 revoke_all` | Размонтировать всё |
@@ -30,6 +32,8 @@ Docker-окружение для AI-агентов.
 .\ai.ps1 up
 .\ai.ps1 up -Agent mimo
 .\ai.ps1 agent
+.\ai.ps1 reset
+.\ai.ps1 recreate
 .\ai.ps1 grant 'E:\data\project'
 .\ai.ps1 grant 'T:\backups' backups
 .\ai.ps1 revoke backups
