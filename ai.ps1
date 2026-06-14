@@ -1,6 +1,6 @@
 ﻿param(
     [Parameter(Mandatory=$false, Position=0)]
-    [ValidateSet("up", "down", "grant", "revoke", "revoke_all", "bash", "agent")]
+    [ValidateSet("up", "down", "redet", "recreate", "grant", "revoke", "revoke_all", "bash", "agent")]
     [string]$Action,
 
     [Parameter(Position=1, Mandatory=$false)]
@@ -57,6 +57,8 @@ if ($Help -or -not $Action) {
     Write-Host "  grant         " -NoNewline; Write-Host "Выдать доступ к папке" -ForegroundColor Gray
     Write-Host "  revoke        " -NoNewline; Write-Host "Отозвать доступ" -ForegroundColor Gray
     Write-Host "  revoke_all    " -NoNewline; Write-Host "Размонтировать всё в /workspace/mnt" -ForegroundColor Gray
+    Write-Host "  redet         " -NoNewline; Write-Host "Удалить контейнеры и тома (down -v)" -ForegroundColor Gray
+    Write-Host "  recreate      " -NoNewline; Write-Host "Удалить + заново запустить (redet + up)" -ForegroundColor Gray
     Write-Host "  bash          " -NoNewline; Write-Host "Интерактивный Bash сеанс" -ForegroundColor Gray
     Write-Host "  agent         " -NoNewline; Write-Host "Запустить AI-агент" -ForegroundColor Gray
     
@@ -68,6 +70,8 @@ if ($Help -or -not $Action) {
     Write-Host "`nПримеры:" -ForegroundColor Green
     Write-Host "  .\ai.ps1 up"
     Write-Host "  .\ai.ps1 up -Agent mimo"
+    Write-Host "  .\ai.ps1 redet"
+    Write-Host "  .\ai.ps1 recreate"
     Write-Host "  .\ai.ps1 agent"
     Write-Host "  .\ai.ps1 agent --help"
     Write-Host "  .\ai.ps1 bash -Root`n"
@@ -93,6 +97,17 @@ switch ($Action) {
     "down" {
         Write-Host "Остановка окружения..." -ForegroundColor Yellow
         Invoke-LocalCompose down
+    }
+
+    "redet" {
+        Write-Host "Удаление контейнеров и томов..." -ForegroundColor Red
+        Invoke-LocalCompose down -v
+    }
+
+    "recreate" {
+        Write-Host "Пересоздание контейнера (агент: $Agent)..." -ForegroundColor Cyan
+        Invoke-LocalCompose down -v
+        Invoke-LocalCompose up -d --build --build-arg AGENT=$Agent
     }
 
     "grant" {
