@@ -23,6 +23,7 @@ Docker-окружение для AI-агентов.
 | Сброс | `.\ai.ps1 reset` | Удалить контейнеры и тома |
 | Пересоздание | `.\ai.ps1 recreate` | Сбросить контейнер и данные |
 | Пересборка | `.\ai.ps1 rebuild` | Пересобрать образ (--no-cache) |
+| Перезапуск | `.\ai.ps1 restart` | Перезапустить контейнер |
 | Статус | `.\ai.ps1 status` | Показать статус контейнеров |
 | Доступ | `.\ai.ps1 grant 'T:\path' [alias]` | Выдать доступ |
 | Отзыв | `.\ai.ps1 revoke alias` | Отозвать доступ |
@@ -36,6 +37,7 @@ Docker-окружение для AI-агентов.
 .\ai.ps1 reset
 .\ai.ps1 recreate
 .\ai.ps1 rebuild
+.\ai.ps1 restart
 .\ai.ps1 status
 .\ai.ps1 agent
 .\ai.ps1 grant 'T:\backups' backups

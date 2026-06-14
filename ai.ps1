@@ -1,6 +1,6 @@
 ﻿param(
     [Parameter(Mandatory=$false, Position=0)]
-    [ValidateSet("up", "down", "reset", "recreate", "rebuild", "status", "grant", "revoke", "revoke_all", "bash", "agent")]
+    [ValidateSet("up", "down", "reset", "recreate", "rebuild", "restart", "status", "grant", "revoke", "revoke_all", "bash", "agent")]
     [string]$Action,
 
     [Parameter(Position=1, Mandatory=$false)]
@@ -60,6 +60,7 @@ if ($Help -or -not $Action) {
     Write-Host "  reset         " -NoNewline; Write-Host "Удалить контейнеры и тома (down -v)" -ForegroundColor Gray
     Write-Host "  recreate      " -NoNewline; Write-Host "Сбросить контейнер и данные (down -v + up)" -ForegroundColor Gray
     Write-Host "  rebuild       " -NoNewline; Write-Host "Пересобрать образ (build --no-cache)" -ForegroundColor Gray
+    Write-Host "  restart       " -NoNewline; Write-Host "Перезапустить контейнер" -ForegroundColor Gray
     Write-Host "  status        " -NoNewline; Write-Host "Показать статус контейнеров" -ForegroundColor Gray
     Write-Host "  bash          " -NoNewline; Write-Host "Интерактивный Bash сеанс" -ForegroundColor Gray
     Write-Host "  agent         " -NoNewline; Write-Host "Запустить AI-агент" -ForegroundColor Gray
@@ -75,6 +76,7 @@ if ($Help -or -not $Action) {
     Write-Host "  .\ai.ps1 reset"
     Write-Host "  .\ai.ps1 recreate"
     Write-Host "  .\ai.ps1 rebuild"
+    Write-Host "  .\ai.ps1 restart"
     Write-Host "  .\ai.ps1 status"
     Write-Host "  .\ai.ps1 agent"
     Write-Host "  .\ai.ps1 agent --help"
@@ -123,6 +125,11 @@ switch ($Action) {
     "rebuild" {
         Write-Host "Пересборка образа (--no-cache)..." -ForegroundColor Cyan
         Invoke-LocalCompose build --no-cache
+    }
+
+    "restart" {
+        Write-Host "Перезапуск контейнера..." -ForegroundColor Cyan
+        Invoke-LocalCompose restart
     }
 
     "grant" {
