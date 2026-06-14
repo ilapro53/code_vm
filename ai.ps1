@@ -93,7 +93,7 @@ function Invoke-LocalCompose {
 switch ($Action) {
     "up" {
         Write-Host "Запуск контейнера (агент: $Agent)..." -ForegroundColor Green
-        Invoke-LocalCompose up -d --build
+        Invoke-LocalCompose up -d --build --no-cache
     }
 
     "status" {
@@ -114,7 +114,7 @@ switch ($Action) {
     "recreate" {
         Write-Host "Пересоздание контейнера (агент: $Agent)..." -ForegroundColor Cyan
         Invoke-LocalCompose down -v
-        Invoke-LocalCompose up -d --build --build-arg AGENT=$Agent
+        Invoke-LocalCompose up -d --build --no-cache
     }
 
     "grant" {
