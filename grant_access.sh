@@ -13,7 +13,7 @@ fi
 
 DRIVE=$(echo "$WINDOWS_PATH" | head -c1 | tr 'A-Z' 'a-z')
 REST=$(echo "$WINDOWS_PATH" | cut -c3- | sed 's/\\/\//g')
-HOST_PATH="/workspace/host_mnt/${DRIVE}${REST}"
+HOST_PATH="/host_mnt/${DRIVE}${REST}"
 
 if [ ! -d "$HOST_PATH" ]; then
     echo "Ошибка: $HOST_PATH не существует (из $WINDOWS_PATH)"

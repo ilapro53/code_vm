@@ -20,6 +20,10 @@ COPY grant_access.sh /usr/local/bin/grant_access
 COPY revoke_access.sh /usr/local/bin/revoke_access
 COPY revoke_all.sh /usr/local/bin/revoke_all
 
+# Контекст для AI-агента
+COPY AGENT.md /workspace/AGENT.md
+RUN chmod 444 /workspace/AGENT.md
+
 # Исправить CRLF -> LF (на случай редактирования в Windows)
 RUN sed -i 's/\r$//' /entrypoint.sh \
     /usr/local/bin/grant_access \
@@ -27,6 +31,9 @@ RUN sed -i 's/\r$//' /entrypoint.sh \
     /usr/local/bin/revoke_all
 
 RUN chmod +x /entrypoint.sh /usr/local/bin/grant_access /usr/local/bin/revoke_access /usr/local/bin/revoke_all
+
+# Закрыть доступ к скриптам для aiuser (root может исполнять)
+RUN chmod 700 /usr/local/bin/grant_access /usr/local/bin/revoke_access /usr/local/bin/revoke_all
 
 WORKDIR /workspace
 

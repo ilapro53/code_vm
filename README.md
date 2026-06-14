@@ -83,11 +83,11 @@ agents/
 
 | Windows | В контейнере |
 |---------|-------------|
-| E:\ | /workspace/host_mnt/e |
-| T:\ | /workspace/host_mnt/t |
-| O:\ | /workspace/host_mnt/o |
+| E:\ | /host_mnt/e |
+| T:\ | /host_mnt/t |
+| O:\ | /host_mnt/o |
 
-Доступ к `host_mnt` закрыт. Используйте `grant_access` для bind-mount.
+Доступ к `/host_mnt/` закрыт. Используй `grant_access` для bind-mount.
 
 ## WSL
 
