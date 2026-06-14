@@ -1,0 +1,13 @@
+services:
+  ai-tool:
+    build: .
+    volumes:
+      - ./mnt:/workspace/mnt:rw
+      - ./input:/workspace/input:ro
+      - E:\:/workspace/host_mnt/e:rw
+      - T:\:/workspace/host_mnt/t:rw
+      - O:\:/workspace/host_mnt/o:rw
+    cap_add:
+      - SYS_ADMIN
+    stdin_open: true
+    tty: true
