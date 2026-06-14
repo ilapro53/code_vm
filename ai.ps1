@@ -1,6 +1,6 @@
 ﻿param(
     [Parameter(Mandatory=$false, Position=0)]
-    [ValidateSet("up", "down", "reset", "recreate", "grant", "revoke", "revoke_all", "bash", "agent")]
+    [ValidateSet("up", "down", "reset", "recreate", "status", "grant", "revoke", "revoke_all", "bash", "agent")]
     [string]$Action,
 
     [Parameter(Position=1, Mandatory=$false)]
@@ -59,6 +59,7 @@ if ($Help -or -not $Action) {
     Write-Host "  revoke_all    " -NoNewline; Write-Host "Размонтировать всё в /workspace/mnt" -ForegroundColor Gray
     Write-Host "  reset         " -NoNewline; Write-Host "Удалить контейнеры и тома (down -v)" -ForegroundColor Gray
     Write-Host "  recreate      " -NoNewline; Write-Host "Удалить + заново запустить (reset + up)" -ForegroundColor Gray
+    Write-Host "  status        " -NoNewline; Write-Host "Показать статус контейнеров" -ForegroundColor Gray
     Write-Host "  bash          " -NoNewline; Write-Host "Интерактивный Bash сеанс" -ForegroundColor Gray
     Write-Host "  agent         " -NoNewline; Write-Host "Запустить AI-агент" -ForegroundColor Gray
     
@@ -72,6 +73,7 @@ if ($Help -or -not $Action) {
     Write-Host "  .\ai.ps1 up -Agent mimo"
     Write-Host "  .\ai.ps1 reset"
     Write-Host "  .\ai.ps1 recreate"
+    Write-Host "  .\ai.ps1 status"
     Write-Host "  .\ai.ps1 agent"
     Write-Host "  .\ai.ps1 agent --help"
     Write-Host "  .\ai.ps1 bash -Root`n"
@@ -92,6 +94,11 @@ switch ($Action) {
     "up" {
         Write-Host "Запуск контейнера (агент: $Agent)..." -ForegroundColor Green
         Invoke-LocalCompose up -d --build --build-arg AGENT=$Agent
+    }
+
+    "status" {
+        Write-Host "Статус контейнеров:" -ForegroundColor Cyan
+        Invoke-LocalCompose ps
     }
     
     "down" {
