@@ -6,7 +6,7 @@ ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8
 
 RUN apt-get update && apt-get install -y \
-    curl ca-certificates git bash gosu \
+    curl ca-certificates git bash gosu dos2unix \
     debootstrap fakeroot fakechroot \
     tree vim nano htop jq unzip zip rsync findutils procps net-tools iputils-ping dnsutils wget \
     && rm -rf /var/lib/apt/lists/*
@@ -28,8 +28,8 @@ COPY sbx.sh /usr/local/bin/sbx
 COPY AGENT.md /workspace/AGENT.md
 RUN chmod 444 /workspace/AGENT.md
 
-# Исправить CRLF -> LF (на случай редактирования в Windows)
-RUN sed -i 's/\r$//' /entrypoint.sh \
+# Исправить CRLF -> LF (редактирование в Windows)
+RUN dos2unix /entrypoint.sh \
     /usr/local/bin/grant_access \
     /usr/local/bin/revoke_access \
     /usr/local/bin/revoke_all \
