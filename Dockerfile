@@ -5,7 +5,7 @@ ARG AGENT=mimo
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8
 
-RUN apt-get update && apt-get install -y curl ca-certificates git bash gosu \
+RUN apt-get update && apt-get install -y curl ca-certificates git bash gosu tree vim nano htop jq unzip zip rsync findutils procps net-tools iputils-ping dnsutils wget \
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m -u 1001 -s /bin/bash aiuser

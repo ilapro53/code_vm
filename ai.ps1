@@ -84,6 +84,14 @@ if ($Help -or -not $Action) {
     return
 }
 
+# Генерация docker-compose.yml из шаблона
+function Invoke-ComposeGenerate {
+    $scriptPath = Join-Path $ComposeDir "generate-compose.ps1"
+    if (Test-Path $scriptPath) {
+        & $scriptPath -TemplatePath (Join-Path $ComposeDir "docker-compose.tpl.yml") -OutputPath (Join-Path $ComposeDir "docker-compose.yml")
+    }
+}
+
 # Функция для вызова docker compose с динамическим массивом аргументов
 function Invoke-LocalCompose {
     Push-Location $ComposeDir
@@ -97,6 +105,7 @@ function Invoke-LocalCompose {
 switch ($Action) {
     "up" {
         Write-Host "Запуск контейнера (агент: $Agent)..." -ForegroundColor Green
+        Invoke-ComposeGenerate
         Invoke-LocalCompose build
         Invoke-LocalCompose up -d
     }
@@ -118,12 +127,14 @@ switch ($Action) {
 
     "recreate" {
         Write-Host "Сброс контейнера и данных..." -ForegroundColor Cyan
+        Invoke-ComposeGenerate
         Invoke-LocalCompose down -v
         Invoke-LocalCompose up -d
     }
 
     "rebuild" {
         Write-Host "Пересборка образа (--no-cache)..." -ForegroundColor Cyan
+        Invoke-ComposeGenerate
         Invoke-LocalCompose build --no-cache
     }
 
