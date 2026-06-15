@@ -1,7 +1,5 @@
 *.sh text eol=lf
-*.sh diff = sh
 *.ps1 text eol=crlf
-*.ps1 diff = sh
 Dockerfile text eol=lf
 *.yml text eol=lf
 *.yaml text eol=lf
