@@ -5,7 +5,6 @@ services:
       args:
         AGENT: mimo
     volumes:
-      - ./mnt:/workspace/mnt:rw
       - ./input:/workspace/input:ro
       - 'C:\:/host_mnt/c:rw'
       - 'D:\:/host_mnt/d:rw'
@@ -13,7 +12,6 @@ services:
       - 'F:\:/host_mnt/f:rw'
       - 'O:\:/host_mnt/o:rw'
       - 'T:\:/host_mnt/t:rw'
-      - 'X:\:/host_mnt/x:rw'
     cap_add:
       - SYS_ADMIN
     stdin_open: true

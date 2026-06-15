@@ -35,5 +35,13 @@ fi
 mkdir -p "$MOUNT_POINT"
 mount --bind "$HOST_PATH" "$MOUNT_POINT"
 
+# Сохранить в список (без дублей)
+GRANT_LIST="/root/.grant_list"
+if [ -f "$GRANT_LIST" ]; then
+    grep -Fxq "$WINDOWS_PATH" "$GRANT_LIST" 2>/dev/null || echo "$WINDOWS_PATH" >> "$GRANT_LIST"
+else
+    echo "$WINDOWS_PATH" > "$GRANT_LIST"
+fi
+
 echo "Доступ выдан: $WINDOWS_PATH"
 echo "  Контейнер: $MOUNT_POINT"

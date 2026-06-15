@@ -7,3 +7,6 @@ awk '$5 ~ /^\/workspace\/mnt\// {print $5}' /proc/self/mountinfo | sort -r | whi
 done
 
 find /workspace/mnt -mindepth 1 -type d -empty -delete 2>/dev/null
+
+# Очистить список grant
+rm -f /root/.grant_list

@@ -149,11 +149,7 @@ switch ($Action) {
             return
         }
         Write-Host "Выдача доступа к пути: $Param1" -ForegroundColor Green
-        if ($Param2) {
-            docker exec -u root -it $ContainerName grant_access $Param1 $Param2
-        } else {
-            docker exec -u root -it $ContainerName grant_access $Param1
-        }
+        docker exec -u root $ContainerName grant_access $Param1 $Param2
     }
 
     "revoke" {
@@ -162,16 +158,12 @@ switch ($Action) {
             return
         }
         Write-Host "Отзыв доступа для: $Param1" -ForegroundColor Yellow
-        if ($Param2) {
-            docker exec -u root -it $ContainerName revoke_access $Param1 $Param2
-        } else {
-            docker exec -u root -it $ContainerName revoke_access $Param1
-        }
+        docker exec -u root $ContainerName revoke_access $Param1 $Param2
     }
 
     "revoke_all" {
         Write-Host "Сброс прав доступа для ВСЕХ папок внутри mnt/..." -ForegroundColor Red
-        docker exec -u root -it $ContainerName revoke_all
+        docker exec -u root $ContainerName revoke_all
     }
 
     "bash" {

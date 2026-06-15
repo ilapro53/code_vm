@@ -26,5 +26,12 @@ fi
 umount "$MOUNT_POINT"
 rmdir -p --ignore-fail-on-non-empty "$MOUNT_POINT" 2>/dev/null
 
+# Удалить из списка grant
+GRANT_LIST="/root/.grant_list"
+if [ -f "$GRANT_LIST" ]; then
+    grep -Fxv "$ARG" "$GRANT_LIST" > "${GRANT_LIST}.tmp" 2>/dev/null || true
+    mv "${GRANT_LIST}.tmp" "$GRANT_LIST"
+fi
+
 echo "Доступ закрыт: $ARG"
 echo "  Был: $MOUNT_POINT"
