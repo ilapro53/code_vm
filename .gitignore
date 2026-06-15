@@ -3,6 +3,7 @@
 
 # Mount points (bind-mounted host directories)
 mnt/
+sandbox/
 
 # Input files (user-provided)
 input/

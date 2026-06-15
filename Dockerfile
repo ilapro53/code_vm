@@ -22,7 +22,7 @@ COPY entrypoint.sh /entrypoint.sh
 COPY grant_access.sh /usr/local/bin/grant_access
 COPY revoke_access.sh /usr/local/bin/revoke_access
 COPY revoke_all.sh /usr/local/bin/revoke_all
-COPY init-sandbox.sh /usr/local/bin/init-sandbox
+COPY sbx.sh /usr/local/bin/sbx
 
 # Контекст для AI-агента
 COPY AGENT.md /workspace/AGENT.md
@@ -33,9 +33,9 @@ RUN sed -i 's/\r$//' /entrypoint.sh \
     /usr/local/bin/grant_access \
     /usr/local/bin/revoke_access \
     /usr/local/bin/revoke_all \
-    /usr/local/bin/init-sandbox
+    /usr/local/bin/sbx
 
-RUN chmod +x /entrypoint.sh /usr/local/bin/grant_access /usr/local/bin/revoke_access /usr/local/bin/revoke_all /usr/local/bin/init-sandbox
+RUN chmod +x /entrypoint.sh /usr/local/bin/grant_access /usr/local/bin/revoke_access /usr/local/bin/revoke_all /usr/local/bin/sbx
 
 # Закрыть доступ к скриптам для aiuser (root может исполнять)
 RUN chmod 700 /usr/local/bin/grant_access /usr/local/bin/revoke_access /usr/local/bin/revoke_all

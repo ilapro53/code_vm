@@ -6,13 +6,17 @@
 - **Рабочая область**: `/workspace/` — пиши сюда
 - **Выданные папки и разрешенные диски**: `/workspace/mnt/` — смонтированы через `grant_access`
 
-## Инициализация sandbox (одноразовая, от aiuser)
+## Sandbox (apt без root)
 
 ```bash
-init-sandbox    # fakeroot fakechroot debootstrap bookworm ~/sandbox
+sbx apt update
+sbx apt install -y htop ffmpeg python3-dev
+sbx /usr/bin/ffmpeg -version
+sbx /bin/bash
 ```
 
-Занимает несколько минут. После — `~/sandbox` готов к использованию.
+Персистентный через `./sandbox` volume (~150-300MB, один раз).
+Инициализация: `fakeroot fakechroot debootstrap --variant=fakechroot bookworm ~/sandbox http://deb.debian.org/debian/`
 
 ## Управление доступом
 
