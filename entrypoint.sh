@@ -15,6 +15,8 @@ if [ -f "$GRANT_LIST" ]; then
         [ -z "$win_path" ] && continue
         grant_access "$win_path" 2>/dev/null || true
     done < "$GRANT_LIST"
+else
+    touch "$GRANT_LIST"
 fi
 
 # Одноразовая инициализация sandbox (если не создана)
