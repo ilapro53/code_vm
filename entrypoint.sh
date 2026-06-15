@@ -10,13 +10,12 @@ chmod 700 /host_mnt
 
 # Восстановить grant-пути из списка
 GRANT_LIST="/root/.grant_list"
-if [ -f "$GRANT_LIST" ]; then
+touch "$GRANT_LIST"
+if [ -s "$GRANT_LIST" ]; then
     while IFS= read -r win_path; do
         [ -z "$win_path" ] && continue
         grant_access "$win_path" 2>/dev/null || true
     done < "$GRANT_LIST"
-else
-    touch "$GRANT_LIST"
 fi
 
 # Одноразовая инициализация sandbox (если не создана)

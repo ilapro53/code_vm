@@ -6,6 +6,7 @@ services:
         AGENT: mimo
     volumes:
       - ./input:/workspace/input:ro
+      - ./grant_list:/root/.grant_list:rw
       - 'C:\:/host_mnt/c:rw'
       - 'D:\:/host_mnt/d:rw'
       - 'E:\:/host_mnt/e:rw'
