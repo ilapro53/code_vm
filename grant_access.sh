@@ -31,10 +31,11 @@ if mountpoint -q "$MOUNT_POINT" 2>/dev/null; then
     echo "Уже примонтировано: $MOUNT_POINT"
     GRANT_LIST="/root/.grant_data/grant_list"
     mkdir -p /root/.grant_data
+    win_entry="$WINDOWS_PATH|$ALIAS"
     if [ -f "$GRANT_LIST" ]; then
-        grep -Fxq "$WINDOWS_PATH" "$GRANT_LIST" 2>/dev/null || echo "$WINDOWS_PATH" >> "$GRANT_LIST"
+        grep -Fxq "$win_entry" "$GRANT_LIST" 2>/dev/null || echo "$win_entry" >> "$GRANT_LIST"
     else
-        echo "$WINDOWS_PATH" > "$GRANT_LIST"
+        echo "$win_entry" > "$GRANT_LIST"
     fi
     exit 0
 fi
@@ -44,10 +45,11 @@ mount --bind "$HOST_PATH" "$MOUNT_POINT"
 
 GRANT_LIST="/root/.grant_data/grant_list"
 mkdir -p /root/.grant_data
+win_entry="$WINDOWS_PATH|$ALIAS"
 if [ -f "$GRANT_LIST" ]; then
-    grep -Fxq "$WINDOWS_PATH" "$GRANT_LIST" 2>/dev/null || echo "$WINDOWS_PATH" >> "$GRANT_LIST"
+    grep -Fxq "$win_entry" "$GRANT_LIST" 2>/dev/null || echo "$win_entry" >> "$GRANT_LIST"
 else
-    echo "$WINDOWS_PATH" > "$GRANT_LIST"
+    echo "$win_entry" > "$GRANT_LIST"
 fi
 
 echo "Доступ выдан: $WINDOWS_PATH"

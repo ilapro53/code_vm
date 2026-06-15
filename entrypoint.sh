@@ -14,9 +14,9 @@ GRANT_LIST="$GRANT_DIR/grant_list"
 mkdir -p "$GRANT_DIR"
 touch "$GRANT_LIST"
 if [ -s "$GRANT_LIST" ]; then
-    while IFS= read -r win_path; do
+    while IFS='|' read -r win_path alias; do
         [ -z "$win_path" ] && continue
-        grant_access "$win_path" || true
+        grant_access "$win_path" "$alias" || true
     done < "$GRANT_LIST"
 fi
 
