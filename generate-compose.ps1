@@ -8,7 +8,7 @@ $ErrorActionPreference = "Stop"
 $drives = Get-PSDrive -PSProvider FileSystem | Where-Object {
     $_.Free -gt 0 -and
     $_.Root -notmatch '^\\' -and
-    $true
+    $_.Name -notin @('A', 'C', 'O')
 } | Sort-Object Name
 
 # Build volumes block
