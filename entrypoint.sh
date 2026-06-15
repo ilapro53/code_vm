@@ -16,7 +16,7 @@ touch "$GRANT_LIST"
 if [ -s "$GRANT_LIST" ]; then
     while IFS= read -r win_path; do
         [ -z "$win_path" ] && continue
-        grant_access "$win_path" 2>/dev/null || true
+        grant_access "$win_path" || true
     done < "$GRANT_LIST"
 fi
 
