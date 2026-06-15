@@ -14,6 +14,7 @@ if [ ! -d "$SANDBOX/etc" ]; then
     echo "Инициализация sandbox (одноразово, ~2-3 мин)..."
     fakeroot fakechroot debootstrap --variant=fakechroot bookworm \
         "$SANDBOX" http://deb.debian.org/debian/
+    chown -R aiuser:aiuser "$SANDBOX"
     echo "Sandbox готов: $SANDBOX"
 fi
 
