@@ -16,8 +16,7 @@ touch "$GRANT_LIST"
 if [ -s "$GRANT_LIST" ]; then
     while IFS= read -r win_path; do
         [ -z "$win_path" ] && continue
-        DRIVE=$(echo "$win_path" | head -c1 | tr 'A-Z' 'a-z')
-        grant_access "$win_path" "${DRIVE}_drive" || true
+        grant_access "$win_path" || true
     done < "$GRANT_LIST"
 fi
 
