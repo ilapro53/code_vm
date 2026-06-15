@@ -94,3 +94,32 @@ agents/
 ```powershell
 wsl -e ln -sfn /mnt/t/ ./mnt/t_drive
 ```
+
+## Глобальная команда `ai`
+
+Чтобы запускать `ai` из любой папки, добавь в PowerShell профиль:
+
+```powershell
+notepad $PROFILE
+```
+
+Добавь строку:
+
+```powershell
+Set-Alias ai "O:\code_vm\ai.ps1"
+```
+
+Примени:
+
+```powershell
+. $PROFILE
+ai up
+```
+
+Или добавь путь в `PATH`:
+
+```powershell
+[Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";O:\code_vm", "User")
+```
+
+После — перезапусти терминал и пиши просто `ai up`.
