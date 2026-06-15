@@ -15,7 +15,7 @@ sbx /usr/bin/ffmpeg -version
 sbx /bin/bash
 ```
 
-Персистентный через `./sandbox` volume (~150-300MB, один раз).
+Персистентный в `~/sandbox` (~150-300MB).
 Инициализация: `fakeroot fakechroot debootstrap --variant=fakechroot bookworm ~/sandbox http://deb.debian.org/debian/`
 
 ## Управление доступом
