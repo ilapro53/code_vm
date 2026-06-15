@@ -35,13 +35,16 @@ fi
 mkdir -p "$MOUNT_POINT"
 mount --bind "$HOST_PATH" "$MOUNT_POINT"
 
-GRANT_LIST="/root/.grant_data/grant_list"
-mkdir -p /root/.grant_data
-win_entry="$WINDOWS_PATH|$ALIAS"
-if [ -f "$GRANT_LIST" ]; then
-    grep -Fxq "$win_entry" "$GRANT_LIST" 2>/dev/null || echo "$win_entry" >> "$GRANT_LIST"
-else
-    echo "$win_entry" > "$GRANT_LIST"
+# Сохранить в grant_list только при ручном вызове (не при restore)
+if [ -z "$RESTORING" ]; then
+    GRANT_LIST="/root/.grant_data/grant_list"
+    mkdir -p /root/.grant_data
+    win_entry="$WINDOWS_PATH|$ALIAS"
+    if [ -f "$GRANT_LIST" ]; then
+        grep -Fxq "$win_entry" "$GRANT_LIST" 2>/dev/null || echo "$win_entry" >> "$GRANT_LIST"
+    else
+        echo "$win_entry" > "$GRANT_LIST"
+    fi
 fi
 
 echo "Доступ выдан: $WINDOWS_PATH"
