@@ -7,6 +7,7 @@ services:
     volumes:
       - ./mnt:/workspace/mnt:rw
       - ./input:/workspace/input:ro
+      - 'C:\:/host_mnt/c:rw'
       - 'D:\:/host_mnt/d:rw'
       - 'E:\:/host_mnt/e:rw'
       - 'F:\:/host_mnt/f:rw'
