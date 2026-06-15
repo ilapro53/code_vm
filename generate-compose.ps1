@@ -7,8 +7,7 @@ $ErrorActionPreference = "Stop"
 # Get available Windows drives (skip system drives A, C, and network drives)
 $drives = Get-PSDrive -PSProvider FileSystem | Where-Object {
     $_.Free -gt 0 -and
-    $_.Root -notmatch '^\\' -and
-    $_.Name -notin @('A', 'O')
+    $_.Root -notmatch '^\\'
 } | Sort-Object Name
 
 # Build volumes block
