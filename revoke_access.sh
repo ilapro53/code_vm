@@ -1,12 +1,12 @@
-#!/bin/bash
-# Использование:
+﻿#!/bin/bash
+# РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ:
 #   revoke_access alias
 #   revoke_access 'E:\path\to\folder'
 
 ARG="$1"
 
 if [ -z "$ARG" ]; then
-    echo "Использование: revoke_access <alias или windows_path>"
+    echo "РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ: revoke_access <alias РёР»Рё windows_path>"
     exit 1
 fi
 
@@ -19,19 +19,19 @@ else
 fi
 
 if ! mountpoint -q "$MOUNT_POINT" 2>/dev/null; then
-    echo "Ошибка: $MOUNT_POINT не примонтирован"
+    echo "РћС€РёР±РєР°: $MOUNT_POINT РЅРµ РїСЂРёРјРѕРЅС‚РёСЂРѕРІР°РЅ"
     exit 1
 fi
 
 umount "$MOUNT_POINT"
 rmdir -p --ignore-fail-on-non-empty "$MOUNT_POINT" 2>/dev/null
 
-# Удалить из списка grant
-GRANT_LIST="/root/.grant_list"
+# РЈРґР°Р»РёС‚СЊ РёР· СЃРїРёСЃРєР° grant
+GRANT_LIST="/root/.grant_data/grant_list"
 if [ -f "$GRANT_LIST" ]; then
     grep -Fxv "$ARG" "$GRANT_LIST" > "${GRANT_LIST}.tmp" 2>/dev/null || true
     mv "${GRANT_LIST}.tmp" "$GRANT_LIST"
 fi
 
-echo "Доступ закрыт: $ARG"
-echo "  Был: $MOUNT_POINT"
+echo "Р”РѕСЃС‚СѓРї Р·Р°РєСЂС‹С‚: $ARG"
+echo "  Р‘С‹Р»: $MOUNT_POINT"
