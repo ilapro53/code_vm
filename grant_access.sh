@@ -29,14 +29,6 @@ fi
 
 if mountpoint -q "$MOUNT_POINT" 2>/dev/null; then
     echo "Уже примонтировано: $MOUNT_POINT"
-    GRANT_LIST="/root/.grant_data/grant_list"
-    mkdir -p /root/.grant_data
-    win_entry="$WINDOWS_PATH|$ALIAS"
-    if [ -f "$GRANT_LIST" ]; then
-        grep -Fxq "$win_entry" "$GRANT_LIST" 2>/dev/null || echo "$win_entry" >> "$GRANT_LIST"
-    else
-        echo "$win_entry" > "$GRANT_LIST"
-    fi
     exit 0
 fi
 
