@@ -1,12 +1,10 @@
 ﻿#!/bin/bash
-# Размонтировать всё внутри /workspace/mnt (корректно обрабатывает пробелы в путях)
+# Удалить все симлинки в /workspace/mnt
 
-awk '$5 ~ /^\/workspace\/mnt\// {print $5}' /proc/self/mountinfo | sort -r | while IFS= read -r mp; do
-    real_mp=$(printf '%b' "$mp")
-    umount "$real_mp" && echo "Закрыто: $real_mp"
-done
+find /workspace/mnt -mindepth 1 -type l -delete 2>/dev/null
+find /workspace/mnt -depth -type d -empty -delete 2>/dev/null
 
-find /workspace/mnt -mindepth 1 -type d -empty -delete 2>/dev/null
+: > /workspace/.grant_data/grant_list
+chmod 644 /workspace/.grant_data/grant_list 2>/dev/null
 
-# Очистить список grant
-rm -f /root/.grant_data/grant_list
+echo "Все симлинки удалены, список grant очищен"

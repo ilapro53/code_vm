@@ -24,3 +24,6 @@ Thumbs.db
 
 # Generated
 docker-compose.yml
+
+# Runtime data (volume mount)
+grant_data/

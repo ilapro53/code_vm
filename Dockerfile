@@ -25,8 +25,8 @@ COPY revoke_all.sh /usr/local/bin/revoke_all
 COPY sbx.sh /usr/local/bin/sbx
 
 # Контекст для AI-агента
-COPY AGENT.md /workspace/AGENT.md
-RUN chmod 444 /workspace/AGENT.md
+COPY README_AI_AGENT.md /workspace/README_AI_AGENT.md
+RUN chmod 444 /workspace/README_AI_AGENT.md
 
 # Исправить CRLF -> LF (редактирование в Windows)
 RUN dos2unix /entrypoint.sh \

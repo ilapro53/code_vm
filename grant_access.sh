@@ -14,8 +14,9 @@ fi
 DRIVE=$(echo "$WINDOWS_PATH" | head -c1 | tr 'A-Z' 'a-z')
 REST=$(echo "$WINDOWS_PATH" | cut -c3- | sed 's/\\/\//g')
 HOST_PATH="/host_mnt/${DRIVE}${REST}"
+HOST_PATH="${HOST_PATH%/}"
 
-if [ ! -d "$HOST_PATH" ]; then
+if [ ! -d "$HOST_PATH" ] && [ ! -f "$HOST_PATH" ]; then
     echo "Ошибка: $HOST_PATH не существует (из $WINDOWS_PATH)"
     echo "Проверь, что диск ${DRIVE^^}: добавлен в docker-compose.yml"
     exit 1
@@ -25,27 +26,38 @@ if [ -n "$ALIAS" ]; then
     MOUNT_POINT="/workspace/mnt/$ALIAS"
 else
     MOUNT_POINT="/workspace/mnt/${DRIVE}${REST}"
+    MOUNT_POINT="${MOUNT_POINT%/}"
 fi
 
-if mountpoint -q "$MOUNT_POINT" 2>/dev/null; then
-    echo "Уже примонтировано: $MOUNT_POINT"
-    exit 0
+if [ -L "$MOUNT_POINT" ]; then
+    TARGET=$(readlink "$MOUNT_POINT")
+    if [ "$TARGET" = "$HOST_PATH" ]; then
+        echo "Уже есть: $MOUNT_POINT -> $HOST_PATH"
+        exit 0
+    fi
 fi
 
-mkdir -p "$MOUNT_POINT"
-mount --bind "$HOST_PATH" "$MOUNT_POINT"
+mkdir -p "$(dirname "$MOUNT_POINT")"
+ln -sf "$HOST_PATH" "$MOUNT_POINT"
 
-# Сохранить в grant_list только при ручном вызове (не при restore)
 if [ -z "$RESTORING" ]; then
-    GRANT_LIST="/root/.grant_data/grant_list"
-    mkdir -p /root/.grant_data
-    win_entry="$WINDOWS_PATH|$ALIAS"
+    GRANT_LIST="/workspace/.grant_data/grant_list"
+    mkdir -p /workspace/.grant_data
+    chmod 755 /workspace/.grant_data
+    already_exists=false
     if [ -f "$GRANT_LIST" ]; then
-        grep -Fxq "$win_entry" "$GRANT_LIST" 2>/dev/null || echo "$win_entry" >> "$GRANT_LIST"
-    else
-        echo "$win_entry" > "$GRANT_LIST"
+        while IFS='|' read -r lp_path lp_alias; do
+            if [ "$lp_path" = "$WINDOWS_PATH" ]; then
+                already_exists=true
+                break
+            fi
+        done < "$GRANT_LIST"
+    fi
+    if [ "$already_exists" = false ]; then
+        echo "$WINDOWS_PATH|$ALIAS" >> "$GRANT_LIST"
+        chmod 644 "$GRANT_LIST"
     fi
 fi
 
 echo "Доступ выдан: $WINDOWS_PATH"
-echo "  Контейнер: $MOUNT_POINT"
+echo "  Контейнер: $MOUNT_POINT -> $HOST_PATH"

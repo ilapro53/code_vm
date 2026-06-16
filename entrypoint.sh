@@ -6,13 +6,16 @@ chmod 755 /workspace/mnt
 
 # Закрыть прямой доступ к "сырым" дискам — только через grant_access
 chown root:root /host_mnt
-chmod 700 /host_mnt
+chmod 711 /host_mnt
 
 # Восстановить grant-пути из списка
-GRANT_DIR="/root/.grant_data"
+GRANT_DIR="/workspace/.grant_data"
 GRANT_LIST="$GRANT_DIR/grant_list"
 mkdir -p "$GRANT_DIR"
+chown root:root "$GRANT_DIR"
+chmod 755 "$GRANT_DIR"
 touch "$GRANT_LIST"
+chmod 644 "$GRANT_LIST"
 if [ -s "$GRANT_LIST" ]; then
     while IFS='|' read -r win_path alias; do
         [ -z "$win_path" ] && continue

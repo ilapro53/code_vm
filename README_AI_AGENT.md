@@ -4,7 +4,8 @@
 
 - **Данные**: `/workspace/input/` — только для чтения
 - **Рабочая область**: `/workspace/` — пиши сюда
-- **Выданные папки и разрешенные диски**: `/workspace/mnt/` — смонтированы через `grant_access`
+- **Выданные папки и разрешенные диски**: `/workspace/mnt/` — symlink через `grant_access`
+- **Список выданных доступов**: `/workspace/.grant_data/grant_list` — readable для агента, формат `WindowsPath|alias`
 
 ## Sandbox (установка пакетов без root)
 
