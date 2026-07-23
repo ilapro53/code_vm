@@ -4,6 +4,7 @@
 # Mount points (bind-mounted host directories)
 mnt/
 sandbox/
+_tmp/
 
 # Input files (user-provided)
 input/
@@ -27,3 +28,6 @@ docker-compose.yml
 
 # Runtime data (volume mount)
 grant_data/
+
+# docker-compose is generatable
+docker-compose.yml
