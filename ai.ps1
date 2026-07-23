@@ -1,6 +1,6 @@
 ﻿param(
     [Parameter(Mandatory=$false, Position=0)]
-    [ValidateSet("up", "down", "reset", "recreate", "rebuild", "restart", "status", "grant", "revoke", "revoke_all", "bash", "agent")]
+    [ValidateSet("up", "down", "reset", "recreate", "rebuild", "restart", "status", "grant", "revoke", "revoke_all", "grants", "bash", "agent")]
     [string]$Action,
 
     [Parameter(Position=1, Mandatory=$false)]
@@ -57,6 +57,7 @@ if ($Help -or -not $Action) {
     Write-Host "  grant         " -NoNewline; Write-Host "Выдать доступ к папке" -ForegroundColor Gray
     Write-Host "  revoke        " -NoNewline; Write-Host "Отозвать доступ" -ForegroundColor Gray
     Write-Host "  revoke_all    " -NoNewline; Write-Host "Размонтировать всё в /workspace/mnt" -ForegroundColor Gray
+    Write-Host "  grants        " -NoNewline; Write-Host "Показать список выданных доступов" -ForegroundColor Gray
     Write-Host "  reset         " -NoNewline; Write-Host "Удалить контейнеры и тома (down -v)" -ForegroundColor Gray
     Write-Host "  recreate      " -NoNewline; Write-Host "Сбросить контейнер и данные (down -v + up)" -ForegroundColor Gray
     Write-Host "  rebuild       " -NoNewline; Write-Host "Пересобрать образ (build --no-cache)" -ForegroundColor Gray
@@ -149,7 +150,7 @@ switch ($Action) {
             return
         }
         Write-Host "Выдача доступа к пути: $Param1" -ForegroundColor Green
-        docker exec -u root $ContainerName grant_access $Param1 $Param2
+        docker exec -u root $ContainerName grant_access "$Param1" "$Param2"
     }
 
     "revoke" {
@@ -158,12 +159,26 @@ switch ($Action) {
             return
         }
         Write-Host "Отзыв доступа для: $Param1" -ForegroundColor Yellow
-        docker exec -u root $ContainerName revoke_access $Param1 $Param2
+        docker exec -u root $ContainerName revoke_access "$Param1"
     }
 
     "revoke_all" {
         Write-Host "Сброс прав доступа для ВСЕХ папок внутри mnt/..." -ForegroundColor Red
         docker exec -u root $ContainerName revoke_all
+    }
+
+    "grants" {
+        Write-Host "Список выданных доступов:" -ForegroundColor Cyan
+        $lines = docker exec $ContainerName cat /workspace/grant_list 2>&1
+        foreach ($line in $lines) {
+            $parts = $line -split '\|', 2
+            $winPath = $parts[0]
+            if (-not $winPath) { continue }
+
+            $drive = $winPath.Substring(0,1).ToLower()
+            $rest = ($winPath.Substring(2) -replace '\\', '/').TrimEnd('/')
+            Write-Host "  '$winPath' -> '/host_mnt/${drive}${rest}'"
+        }
     }
 
     "bash" {
@@ -187,10 +202,12 @@ switch ($Action) {
         if ($Param2) { $AgentArgs += $Param2 }
         if ($RemainingArgs) { $AgentArgs += $RemainingArgs }
 
-        if ($AgentArgs.Count -gt 0) {
-            $cmd = "docker exec -u $User -it $ContainerName $binary $($AgentArgs -join ' ')"
-        } else {
-            $cmd = "docker exec -u $User -it $ContainerName $binary"
+        $quotedArgs = $AgentArgs | ForEach-Object {
+            if ($_ -match '\s') { "'$_'" } else { $_ }
+        }
+        $cmd = "docker exec -u $User -it $ContainerName $binary"
+        if ($quotedArgs.Count -gt 0) {
+            $cmd += " $($quotedArgs -join ' ')"
         }
         cmd.exe /c $cmd
     }
