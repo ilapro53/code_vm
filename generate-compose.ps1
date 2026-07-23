@@ -14,6 +14,7 @@ $drives = Get-PSDrive -PSProvider FileSystem | Where-Object {
 $volumes = @()
 $volumes += "      - ./mnt:/workspace/mnt:rw"
 $volumes += "      - ./input:/workspace/input:ro"
+$volumes += "      - ./grant_data:/workspace/.grant_data:rw"
 foreach ($drive in $drives) {
     $letter = $drive.Name.ToLower()
     $path = $drive.Root

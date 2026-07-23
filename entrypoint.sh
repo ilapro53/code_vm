@@ -14,7 +14,7 @@ GRANT_LIST="$GRANT_DIR/grant_list"
 mkdir -p "$GRANT_DIR"
 chown root:root "$GRANT_DIR"
 chmod 755 "$GRANT_DIR"
-touch "$GRANT_LIST"
+: > "$GRANT_LIST"
 chmod 644 "$GRANT_LIST"
 if [ -s "$GRANT_LIST" ]; then
     while IFS='|' read -r win_path alias; do
@@ -22,6 +22,9 @@ if [ -s "$GRANT_LIST" ]; then
         RESTORING=1 grant_access "$win_path" "$alias" || true
     done < "$GRANT_LIST"
 fi
+
+# Symlink для удобного чтения агентом
+ln -sf /workspace/.grant_data/grant_list /workspace/grant_list
 
 # Одноразовая инициализация sandbox (если не создана)
 SANDBOX=/home/aiuser/sandbox

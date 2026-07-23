@@ -47,7 +47,7 @@ if [ -z "$RESTORING" ]; then
     already_exists=false
     if [ -f "$GRANT_LIST" ]; then
         while IFS='|' read -r lp_path lp_alias; do
-            if [ "$lp_path" = "$WINDOWS_PATH" ]; then
+            if [ "$lp_path" = "$WINDOWS_PATH" ] && [ "$lp_alias" = "$ALIAS" ]; then
                 already_exists=true
                 break
             fi
