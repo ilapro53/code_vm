@@ -10,7 +10,7 @@
     [string]$Param2,
 
     [Parameter(Mandatory=$false)]
-    [ValidateSet("mimo")]
+    [ValidateSet("mimo", "opencode", "openclaw", "pi")]
     [string]$Agent = "mimo",
 
     [Parameter(Mandatory=$false)]
@@ -53,6 +53,7 @@ if ($Help -or -not $Action) {
     
     Write-Host "`nДоступные действия:" -ForegroundColor DarkCyan
     Write-Host "  up            " -NoNewline; Write-Host "Запустить контейнеры" -ForegroundColor Gray
+    Write-Host "  up -Agent ... " -NoNewline; Write-Host "С агентом: mimo, opencode, openclaw" -ForegroundColor Gray
     Write-Host "  down          " -NoNewline; Write-Host "Остановить и удалить контейнеры" -ForegroundColor Gray
     Write-Host "  grant         " -NoNewline; Write-Host "Выдать доступ к папке" -ForegroundColor Gray
     Write-Host "  revoke        " -NoNewline; Write-Host "Отозвать доступ" -ForegroundColor Gray
